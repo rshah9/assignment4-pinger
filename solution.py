@@ -53,10 +53,11 @@ def receiveOnePing(mySocket, ID, timeout, destAddr):
         icmpHeader = recPacket[20:28]
         type, code, checksum, id, sequence = struct.unpack(
             "bbHHh", icmpHeader)
-        if type == 0 and id == ID:
+        if id == ID:
             bytesInDouble = struct.calcsize("d")
             timeSent = struct.unpack("d", recPacket[28:28 + bytesInDouble])[0]
             return timeReceived - timeSent
+
 #         if type != 0:
 #             return 'expected type=0, but got {}'.format(type)
 #         if code != 0:
