@@ -54,12 +54,12 @@ def receiveOnePing(mySocket, ID, timeout, destAddr):
         type, code, checksum, id, sequence = struct.unpack(
             "bbHHh", icmpHeader)
         ipHeader = recPacket[0:20]
-        ipTtl = ipHeader[8 : 10]
-        ipTtl = struct.unpack("!B", ipTtl)
+        ipTtl = ipHeader[8 : 9]
+        (ipTtl,) = struct.unpack("B", ipTtl)
 
         data = recPacket[28:]
 
-        timeSent = struct.unpack("d", data[0:8])
+        (timeSent,) = struct.unpack("d", data)
         if id == ID:
             delay = (timeReceived - timeSent) * 1000
             return delay
