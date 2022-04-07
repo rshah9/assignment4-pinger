@@ -16,7 +16,7 @@ def checksum(string):
     count = 0
 
     while count < countTo:
-        thisVal = (string[count + 1]) * 256 + (string[count])
+        thisVal = ord(string[count + 1]) * 256 + ord(string[count])
         csum += thisVal
         csum &= 0xffffffff
         count += 2
@@ -50,14 +50,14 @@ def receiveOnePing(mySocket, ID, timeout, destAddr):
         # Fill in start
 
         # Fetch the ICMP header from the IP packet
-        type, code, checksum, packetID, sequence = struct.unpack(
+        type, code, checksum, id, sequence = struct.unpack(
             "bbHHh", recPacket[20:28])
         if type != 0:
-            return 'expected type 0, got %d' % type
+            return 'expected type=0, but got {}'.format(type)
         if code != 0:
-            return 'expected code 0, got %d' % code
-        if packetID != id:
-            return 'expected id %d, got %d' % (id, packetID)
+            return 'expected type=0, but got {}'.format(code)
+        if ID != id:
+            return 'expected id={}, but got {}'.format(ID, id)
         send_time = struct.unpack("d", recPacket[28:36])[0]
 
         rtt = (timeReceived - send_time) * 1000
@@ -66,13 +66,13 @@ def receiveOnePing(mySocket, ID, timeout, destAddr):
         rtt_stdev = (rtt_sum / rtt_count) - rtt
         rtt_min = min(rtt_min, rtt)
         rtt_max = max(rtt_max, rtt)
-
+        rtt_avg = rtt_sum / rtt_count
         ip_header = struct.unpack('!BBHHHBBH4s4s', recPacket[:20])
-        ttl = ip_header[5]
+        ttl = ip_header[2]
         saddr = socket.inet_ntoa(ip_header[8])
         length = len(recPacket) - 20
 
-        return '{} bytes from {}: icmp_seq={} ttl={} time={:.2f} ms'.format(
+        return '{} bytes from {}: icmp_seq={} ttl={} time={:.3f} ms'.format(
             length, saddr, sequence, ttl, rtt)
 
 
