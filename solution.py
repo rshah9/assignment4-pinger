@@ -16,7 +16,7 @@ def checksum(string):
     count = 0
 
     while count < countTo:
-        thisVal = string(count + 1) * 256 + string(count)
+        thisVal = (string[count + 1]) * 256 + (string[count])
         csum += thisVal
         csum &= 0xffffffff
         count += 2
